@@ -8,32 +8,39 @@
     <link rel="stylesheet" type="text/css" href="simcir-basicset.css" />
     <script type="text/javascript" src="simcir-library.js"></script>
     <script>
-      simcir.registerDevice('DCToggle', function(device) {
-        var out = device.addOutput(); // 出力ノード作成
-        var state = false;            // 初期状態 OFF
-        device.halfWidth = 22;
-        device.halfHeight = 14;
-        var update = function() {
-          out.setValue(state ? 1 : null); // ONなら1、OFFなら通電なし
-          var $surface = device.getSurface();
-          $surface.children().remove();
-          // ボタンの外枠（ONで緑、OFFでグレー）
-          $surface.append(simcir.createSvgElement('rect')
-            .attr('x', -20).attr('y', -12).attr('width', 40).attr('height', 24)
-            .attr('rx', 4).css('fill', state ? '#4CAF50' : '#CCCCCC').css('stroke', '#000'));
-          // ラベル文字
-        $surface.append(simcir.createSvgElement('text')
-          .attr('x', 0).attr('y', 4).attr('text-anchor', 'middle')
-          .css('font-size', '10px').css('font-weight', 'bold').css('fill', state ? '#FFF' : '#000')
-          .text(state ? 'DC ON' : 'DC OFF'));
-      };
-      // クリックで切り替え
-      device.$ui.on('click', function() {
-        state = !state;
-        update();
+      $(function() {
+        simcir.registerDevice('DCToggle', function(device) {
+          device.halfWidth = 22;
+          device.halfHeight = 14;
+          var out = device.addOutput(22, 0); // 出力ノードの座標を明示
+          var state = false;                // 初期状態 OFF
+
+          var update = function() {
+            out.setValue(state ? 1 : null); // ONなら1、OFFなら通電なし
+            var $surface = device.getSurface();
+            $surface.children().remove();
+
+            // ボタンの外枠（ONで緑、OFFでグレー）
+            $surface.append(simcir.createSvgElement('rect')
+              .attr('x', -20).attr('y', -12).attr('width', 40).attr('height', 24)
+              .attr('rx', 4).css('fill', state ? '#4CAF50' : '#CCCCCC').css('stroke', '#000'));
+
+            // ラベル文字
+            $surface.append(simcir.createSvgElement('text')
+              .attr('x', 0).attr('y', 4).attr('text-anchor', 'middle')
+              .css('font-size', '10px').css('font-weight', 'bold').css('fill', state ? '#FFF' : '#000')
+              .text(state ? 'DC ON' : 'DC OFF'));
+          };
+
+          // クリックで切り替え
+          device.$ui.on('click', function() {
+            state = !state;
+            update();
+          });
+
+          update();
+        });
       });
-      update();
-    });
   </script>
   <title>SimcirJS Sandbox</title>
   </head>
