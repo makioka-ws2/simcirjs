@@ -7,46 +7,7 @@
     <script type="text/javascript" src="simcir-basicset.js"></script>
     <link rel="stylesheet" type="text/css" href="simcir-basicset.css" />
     <script type="text/javascript" src="simcir-library.js"></script>
-    <script>
-      simcir.registerDevice('DCToggle', function(device) {
-        device.halfWidth = 16;
-        device.halfHeight = 16;
-
-        // 右端中央 (x:16, y:0) に出力ポートを追加
-        var out = device.addOutput(16, 0);
-        var state = false;
-        var $surface = device.getSurface();
-
-        var updateUI = function() {
-          out.setValue(state ? 1 : null);
-          $surface.children().remove();
-
-          // ① 外枠（スイッチ台座）
-          $surface.append(simcir.createSvgElement('rect')
-            .attr('x', -12).attr('y', -12).attr('width', 24).attr('height', 24)
-            .attr('rx', 3).css('fill', '#e0e0e0').css('stroke', '#000'));
-
-          // ② スイッチ溝（ONで緑、OFFでグレー）
-          $surface.append(simcir.createSvgElement('rect')
-            .attr('x', -5).attr('y', -9).attr('width', 10).attr('height', 18)
-            .attr('rx', 4).css('fill', state ? '#4CAF50' : '#888888'));
-
-          // ③ つまみ（ONで上、OFFで下）
-          $surface.append(simcir.createSvgElement('circle')
-            .attr('cx', 0).attr('cy', state ? -4 : 4).attr('r', 4)
-            .css('fill', '#ffffff').css('stroke', '#000'));
-        };
-
-        // $surface にクリックイベントを設定
-        $surface.on('click', function() {
-          state = !state;
-          updateUI();
-        });
-
-        updateUI();
-      });
-    </script>
-  <title>SimcirJS Sandbox</title>
+    <title>SimcirJS Sandbox</title>
 <!-- 1. iPadでの画面移動・ズームを防止 -->
 <style>
   .simcir, .simcir * {
@@ -112,8 +73,7 @@
         {"type":"NOT"},
         {"type":"NAND"},
         {"type":"NOR"},
-        {"type":"XOR"},
-        {"type":"DCToggle"}
+        {"type":"XOR"}
       ]
     }
     </div>
