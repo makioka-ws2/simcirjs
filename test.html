@@ -3,48 +3,57 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
     <script>
-      (function() {
-        function touchHandler(event) {
-          var touches = event.changedTouches;
-          if (!touches || touches.length === 0) return;
+  (function() {
+    function touchHandler(event) {
+      var touches = event.changedTouches;
+      if (!touches || touches.length === 0) return;
 
-          var first = touches[0];
-          var type = "";
+      var first = touches[0];
+      var type = "";
 
-          switch(event.type) {
-            case "touchstart": type = "mousedown"; break;
-            case "touchmove":  type = "mousemove"; break;        
-            case "touchend":   type = "mouseup";   break;
-            default: return;
-          }
+      switch(event.type) {
+        case "touchstart": type = "mousedown"; break;
+        case "touchmove":  type = "mousemove"; break;
+        case "touchend":   type = "mouseup";   break;
+        default: return;
+      }
 
-          var simulatedEvent = new MouseEvent(type, {
-            bubbles: true,
-            cancelable: true,
-            view: window,
-            detail: 1,
-            screenX: first.screenX,
-            screenY: first.screenY,
-            clientX: first.clientX,
-            clientY: first.clientY,
-            button: 0,
-            buttons: 1
-          });
+      // 指の位置にある要素を動的に取得（ターゲット固定化の回避）
+      var targetElement = document.elementFromPoint(first.clientX, first.clientY) || first.target;
 
-          first.target.dispatchEvent(simulatedEvent);
+      var simulatedEvent = new MouseEvent(type, {
+        bubbles: true,
+        cancelable: true,
+        view: window,
+        detail: 1,
+        screenX: first.screenX,
+        screenY: first.screenY,
+        clientX: first.clientX,
+        clientY: first.clientY,
+        button: 0,
+        buttons: 1
+      });
 
-          // ドラッグ時に画面がスクロールするのを防止
-          if (event.cancelable) {
-            event.preventDefault();
-          }
-        }
+      targetElement.dispatchEvent(simulatedEvent);
 
-        document.addEventListener("touchstart", touchHandler, { passive: false });
-        document.addEventListener("touchmove", touchHandler, { passive: false });
-        document.addEventListener("touchend", touchHandler, { passive: false });
-        document.addEventListener("touchcancel", touchHandler, { passive: false });
-      })();
-    </script>
+      if (event.cancelable) {
+        event.preventDefault();
+      }
+    }
+
+    document.addEventListener("touchstart", touchHandler, { passive: false });
+    document.addEventListener("touchmove", touchHandler, { passive: false });
+    document.addEventListener("touchend", touchHandler, { passive: false });
+    document.addEventListener("touchcancel", touchHandler, { passive: false });
+  })();
+</script>
+    <style>
+  .simcir {
+    touch-action: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+</style>
     <script type="text/javascript" src="simcir.js"></script>
     <link rel="stylesheet" type="text/css" href="simcir.css" />
     <script type="text/javascript" src="simcir-basicset.js"></script>
