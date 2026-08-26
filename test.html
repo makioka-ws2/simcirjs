@@ -54,20 +54,6 @@
         {"type":"NOR"},
         {"type":"XOR"},
         {"type":"DC-Toggle"}
-      ],
-      "devices":[
-        {"type":"DC","id":"dev0","x":32,"y":64,"label":"DC"},
-        {"type":"AND","id":"dev1","x":160,"y":64,"label":"AND"},
-        {"type":"LED","label":"OUTPUT","id":"dev2","x":224,"y":64},
-        {"type":"Toggle","id":"dev3","x":96,"y":32,"label":"A","state":{"on":false}},
-        {"type":"Toggle","id":"dev4","x":96,"y":96,"label":"B","state":{"on":false}}
-      ],
-      "connectors":[
-        {"from":"dev1.in0","to":"dev3.out0"},
-        {"from":"dev1.in1","to":"dev4.out0"},
-        {"from":"dev2.in0","to":"dev1.out0"},
-        {"from":"dev3.in0","to":"dev0.out0"},
-        {"from":"dev4.in0","to":"dev0.out0"}
       ]
     }
     </div>
