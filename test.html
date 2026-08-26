@@ -8,7 +8,7 @@
     <link rel="stylesheet" type="text/css" href="simcir-basicset.css" />
     <script type="text/javascript" src="simcir-library.js"></script>
     <script>
-      simcir.registerDevice('DC-Toggle', function(device) {
+      simcir.registerDevice('DCToggle', function(device) {
         var out = device.addOutput(); // 出力ノード作成
         var state = false;            // 初期状態 OFF
         device.halfWidth = 22;
@@ -52,7 +52,8 @@
         {"type":"NOT"},
         {"type":"NAND"},
         {"type":"NOR"},
-        {"type":"XOR"}
+        {"type":"XOR"},
+        {"type":"DCToggle"}
       ]
     }
     </div>
