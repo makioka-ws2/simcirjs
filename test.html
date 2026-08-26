@@ -8,58 +8,94 @@
     <link rel="stylesheet" type="text/css" href="simcir-basicset.css" />
     <script type="text/javascript" src="simcir-library.js"></script>
     <script>
-      $(function() {
-    simcir.registerDevice('DCToggle', function(device) {
-      // 1. 部品サイズと出力端子の位置（右端中央 x=16, y=0）
-      device.halfWidth = 16;
-      device.halfHeight = 16;
-      var out = device.addOutput(16, 0); // 出力端子を右側に作成
-      var state = false;                // 初期状態 (OFF)
+      simcir.registerDevice('DCToggle', function(device) {
+        device.halfWidth = 16;
+        device.halfHeight = 16;
 
-      var update = function() {
-        // DC出力（ONなら 1、OFFなら 通電なし/null）
-        out.setValue(state ? 1 : null);
+        // 右端中央 (x:16, y:0) に出力ポートを追加
+        var out = device.addOutput(16, 0);
+        var state = false;
 
-        var $surface = device.getSurface();
-        $surface.children().remove();
+        var updateUI = function() {
+          out.setValue(state ? 1 : null);
 
-        // ① 外枠（スイッチ台座）
-        $surface.append(simcir.createSvgElement('rect')
-          .attr('x', -14).attr('y', -14).attr('width', 28).attr('height', 28)
-          .attr('rx', 4).css('fill', '#f4f4f4').css('stroke', '#333').css('stroke-width', '1'));
+          var $surface = device.getSurface();
+          $surface.children().remove();
 
-        // ② スイッチの溝（ONで緑、OFFでグレー）
-        $surface.append(simcir.createSvgElement('rect')
-          .attr('x', -5).attr('y', -10).attr('width', 10).attr('height', 20)
-          .attr('rx', 5).css('fill', state ? '#4CAF50' : '#b0b0b0'));
+          // 外枠（スイッチ台座）
+          $surface.append(simcir.createSvgElement('rect')
+            .attr('x', -12).attr('y', -12).attr('width', 24).attr('height', 24)
+            .attr('rx', 3).css('fill', '#e0e0e0').css('stroke', '#000'));
 
-        // ③ つまみ（円形ノブ：ONで上、OFFで下に移動）
-        $surface.append(simcir.createSvgElement('circle')
-          .attr('cx', 0).attr('cy', state ? -5 : 5).attr('r', 4.5)
-          .css('fill', '#ffffff').css('stroke', '#333').css('stroke-width', '1'));
+          // スイッチ溝（ONで緑、OFFでグレー）
+          $surface.append(simcir.createSvgElement('rect')
+            .attr('x', -5).attr('y', -9).attr('width', 10).attr('height', 18)
+            .attr('rx', 4).css('fill', state ? '#4CAF50' : '#888888'));
 
-        // ④ 「DC」の刻印テキスト
-        $surface.append(simcir.createSvgElement('text')
-          .attr('x', -9).attr('y', -2).attr('text-anchor', 'middle')
-          .css('font-size', '6px').css('font-weight', 'bold').css('fill', '#555')
-          .text('D'));
-        $surface.append(simcir.createSvgElement('text')
-          .attr('x', -9).attr('y', 5).attr('text-anchor', 'middle')
-          .css('font-size', '6px').css('font-weight', 'bold').css('fill', '#555')
-          .text('C'));
-      };
+          // スイッチつまみ（ONで上、OFFで下）
+          $surface.append(simcir.createSvgElement('circle')
+            .attr('cx', 0).attr('cy', state ? -4 : 4).attr('r', 4)
+            .css('fill', '#ffffff').css('stroke', '#000'));
+        };
 
-      // クリックで切り替え
-      device.$ui.on('click', function() {
-        state = !state;
-        update();
+        device.$ui.on('click', function() {
+          state = !state;
+          updateUI();
+        });
+
+        updateUI();
       });
-
-      update();
-    });
-  });
-  </script>
+    </script>
   <title>SimcirJS Sandbox</title>
+<!-- 1. iPadでの画面移動・ズームを防止 -->
+<style>
+  .simcir, .simcir * {
+    touch-action: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+</style>
+
+<!-- 2. タッチイベント（touchstart/move/end）をマウスイベントに変換 -->
+<script>
+  (function() {
+    function touchHandler(event) {
+      var touches = event.changedTouches,
+          first = touches[0],
+          type = "";
+
+      switch(event.type) {
+        case "touchstart": type = "mousedown"; break;
+        case "touchmove":  type = "mousemove"; break;        
+        case "touchend":   type = "mouseup";   break;
+        default: return;
+      }
+
+      var simulatedEvent = document.createEvent("MouseEvent");
+      simulatedEvent.initMouseEvent(
+        type, true, true, window, 1,
+        first.screenX, first.screenY,
+        first.clientX, first.clientY, false,
+        false, false, false, 0, null
+      );
+
+      first.target.dispatchEvent(simulatedEvent);
+      
+      if (event.cancelable) {
+        event.preventDefault();
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', function() {
+      document.querySelectorAll('.simcir').forEach(function(el) {
+        el.addEventListener("touchstart", touchHandler, true);
+        el.addEventListener("touchmove", touchHandler, true);
+        el.addEventListener("touchend", touchHandler, true);
+        el.addEventListener("touchcancel", touchHandler, true);
+      });
+    });
+  })();
+</script>
   </head>
   <body>
     <div class="simcir">
